@@ -15,6 +15,8 @@ namespace nodewpi {
         nodewpi::init_wiringPiISR(target);
         nodewpi::init_wiringSerial(target);
         nodewpi::init_wiringShift(target);
+
+        nodewpi::init_devlib(target);
     }
 }
 

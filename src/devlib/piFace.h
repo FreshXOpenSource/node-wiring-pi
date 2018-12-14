@@ -2,7 +2,11 @@
 #define _WPI_PI_FACE_H_
 
   #include "../addon.h"
+
+namespace nodewpi {
   
-  NAN_METHOD_EXPORT_INIT(piFace);
+  NAN_MODULE_INIT(init_piFace);
+
+}
 
 #endif

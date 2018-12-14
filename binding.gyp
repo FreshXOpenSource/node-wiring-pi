@@ -14,7 +14,10 @@
         'src/wiringSerial.cc',
         'src/wiringShift.cc',
 
-        'src/nodeWiringPi.cc'
+        'src/nodeWiringPi.cc',
+
+        'src/devlib/devlib.cc',
+        'src/devlib/piFace.cc',
 
       ],
       'include_dirs': [
