@@ -187,7 +187,19 @@ static CopyablePersistentFunction interrupt_callbacks[64];
 
 
 
-#if NODE_VERSION_AT_LEAST(0, 11, 0)
+#if NODE_VERSION_AT_LEAST(12, 0, 0)
+  // Node >= 11 version of dispatchInterrupt
+  static void dispatchInterrupt(uv_async_t* handle) {
+    interrupt_t* data = (interrupt_t*)handle->data;
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    HandleScope scope(isolate);
+    v8::Local<Function> callback = v8::Local<Function>::New(isolate, interrupt_callbacks[data->pin]);
+    Local<Value> argv[] = {
+      UINT32(data->delta)
+    };
+    callback->Call(isolate->GetCurrentContext(), Null(isolate), 1, argv);
+  }
+#elif NODE_VERSION_AT_LEAST(0, 11, 0)
   // Node >= 11 version of dispatchInterrupt
   static void dispatchInterrupt(uv_async_t* handle) {
     interrupt_t* data = (interrupt_t*)handle->data;

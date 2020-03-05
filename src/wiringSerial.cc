@@ -13,8 +13,10 @@ NAN_METHOD(serialOpen) {
   
   CHECK_ARGUMENT_TYPE_STRING(0);
   CHECK_ARGUMENT_TYPE_INT32(1);
-  
-  #if NODE_VERSION_AT_LEAST(0, 11, 0)
+
+  #if NODE_VERSION_AT_LEAST(12, 0, 0)
+    String::Utf8Value device(v8::Isolate::GetCurrent(), GET_ARGUMENT_AS_STRING(0));
+  #elif NODE_VERSION_AT_LEAST(0, 11, 0)
     String::Utf8Value device(GET_ARGUMENT_AS_STRING(0));
   #else
     String::AsciiValue device(GET_ARGUMENT_AS_STRING(0));

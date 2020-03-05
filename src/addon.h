@@ -138,13 +138,25 @@
       throw_error("%s: (arguments['%s'].length === %i) === false", __func__, GET_ARGUMENT_NAME(id), length); \
     }
 
-  #define GET_ARGUMENT_AS_TYPE(id, type) info[id]->type()
+  #if NODE_VERSION_AT_LEAST(12, 0, 0)
+    #define GET_ARGUMENT_AS_TYPE(id, type) info[id]->type(Nan::GetCurrentContext()).ToLocalChecked()
+    #define GET_ARGUMENT_AS_TYPE_JUST(id, type) info[id]->type(Nan::GetCurrentContext()).FromJust()
+    #define GET_ARGUMENT_AS_TYPE_STRING(id, type) info[id]->type(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::String>())
 
-  #define GET_ARGUMENT_AS_INT32(id) GET_ARGUMENT_AS_TYPE(id, Int32Value)
-  #define GET_ARGUMENT_AS_UINT32(id) GET_ARGUMENT_AS_TYPE(id, Uint32Value)
-  #define GET_ARGUMENT_AS_NUMBER(id) GET_ARGUMENT_AS_TYPE(id, NumberValue)
-  #define GET_ARGUMENT_AS_STRING(id) GET_ARGUMENT_AS_TYPE(id, ToString)
-  #define GET_ARGUMENT_AS_LOCAL_FUNCTION(id) v8::Local<v8::Function>::Cast(info[id])
+    #define GET_ARGUMENT_AS_OBJECT(id) GET_ARGUMENT_AS_TYPE(id, ToObject)
+    #define GET_ARGUMENT_AS_INT32(id) GET_ARGUMENT_AS_TYPE_JUST(id, Int32Value)
+    #define GET_ARGUMENT_AS_UINT32(id) GET_ARGUMENT_AS_TYPE_JUST(id, Uint32Value)
+    #define GET_ARGUMENT_AS_NUMBER(id) GET_ARGUMENT_AS_TYPE_JUST(id, NumberValue)
+    #define GET_ARGUMENT_AS_STRING(id) GET_ARGUMENT_AS_TYPE_STRING(id, ToString)
+    #define GET_ARGUMENT_AS_LOCAL_FUNCTION(id) v8::Local<v8::Function>::Cast(info[id])
+  #else
+    #define GET_ARGUMENT_AS_TYPE(id, type) info[id]->type()
+
+    #define GET_ARGUMENT_AS_INT32(id) GET_ARGUMENT_AS_TYPE(id, Int32Value)
+    #define GET_ARGUMENT_AS_UINT32(id) GET_ARGUMENT_AS_TYPE(id, Uint32Value)
+    #define GET_ARGUMENT_AS_NUMBER(id) GET_ARGUMENT_AS_TYPE(id, NumberValue)
+    #define GET_ARGUMENT_AS_STRING(id) GET_ARGUMENT_AS_TYPE(id, ToString)
+  #endif
 
   #if !NODE_VERSION_AT_LEAST(0, 11, 0)
     #define GET_ARGUMENT_AS_PERSISTENT_FUNCTION(id) v8::Persistent<v8::Function>::New(GET_ARGUMENT_AS_LOCAL_FUNCTION(id))

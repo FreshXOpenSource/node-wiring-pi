@@ -40,8 +40,15 @@ NAN_METHOD(wiringPiSPIDataRW) {
   const std::vector<int> validChannels = { 0, 1 };
 
   int channel = GET_ARGUMENT_AS_INT32(0);
-  Local<Object> spiDataObj = info[1]->ToObject();
-  unsigned int length = info[1]->Uint32Value();
+
+  #if NODE_VERSION_AT_LEAST(12, 0, 0)
+    Local<Object> spiDataObj = GET_ARGUMENT_AS_OBJECT(1);
+    unsigned int length = GET_ARGUMENT_AS_UINT32(1);
+  #else
+    Local<Object> spiDataObj = info[1]->ToObject();
+    unsigned int length = info[1]->Uint32Value();
+  #endif
+
   char* data = node::Buffer::Data(spiDataObj);
   
   if(find_int(channel, validChannels)) {
